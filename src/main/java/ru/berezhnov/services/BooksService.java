@@ -1,12 +1,15 @@
 package ru.berezhnov.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.berezhnov.models.Book;
 import ru.berezhnov.models.Person;
 import ru.berezhnov.repositories.BooksRepository;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -30,12 +33,14 @@ public class BooksService {
 
     @Transactional
     public void save(Book book) {
+        book.setLastModified(new Date());
         booksRepository.save(book);
     }
 
     @Transactional
     public void update(int id, Book book) {
         book.setId(id);
+        book.setLastModified(new Date());
         booksRepository.save(book);
     }
 
@@ -55,5 +60,19 @@ public class BooksService {
         Book book = findOne(bookId);
         book.getOwner().getBooks().remove(book);
         book.setOwner(null);
+    }
+
+    public List<Book> findAllSorted() {
+        return booksRepository.findAll(Sort.by("year"));
+    }
+
+    public List<Book> findAllPagination(int pageNumber, int size, boolean sorted) {
+        if (sorted) return booksRepository.findAll(PageRequest.of(pageNumber, size, Sort.by("year")))
+                .getContent();
+        return booksRepository.findAll(PageRequest.of(pageNumber, size)).getContent();
+    }
+
+    public Book findBookByTitleStartingWith(String title) {
+        return booksRepository.findBookByTitleStartingWith(title);
     }
 }
