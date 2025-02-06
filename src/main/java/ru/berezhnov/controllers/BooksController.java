@@ -11,6 +11,7 @@ import ru.berezhnov.models.Person;
 import ru.berezhnov.services.BooksService;
 import ru.berezhnov.services.PeopleService;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -27,8 +28,19 @@ public class BooksController {
     }
 
     @GetMapping()
-    public String booksPage(Model model) {
-        model.addAttribute("books", booksService.findAll());
+    public String booksPage(@RequestParam(name = "page", defaultValue = "-1") int pageNumber,
+                            @RequestParam(name = "books_per_page", defaultValue = "100") int size,
+                            @RequestParam(name = "sort_by_year", defaultValue = "false") boolean sortByYear,
+                            Model model) {
+        List<Book> books = null;
+        if (pageNumber < 0) {
+            if (sortByYear) books = booksService.findAllSorted();
+            else books = booksService.findAll();
+        } else {
+            if (sortByYear) books = booksService.findAllPagination(pageNumber, size, true);
+            else books = booksService.findAllPagination(pageNumber, size, false);
+        }
+        model.addAttribute("books", books);
         return "books/index";
     }
 
@@ -91,6 +103,23 @@ public class BooksController {
     @DeleteMapping("/{id}")
     public String deleteBook(@PathVariable("id") int id) {
         booksService.delete(id);
+
         return "redirect:/books";
+    }
+
+    @GetMapping("/search")
+    public String search(@ModelAttribute(name = "proxyBook") Book proxyBook,
+                         Model model) {
+        Book book = null;
+        String title = proxyBook.getTitle();
+        if (title != null && !title.isEmpty()) {
+            book = booksService.findBookByTitleStartingWith(title);
+            model.addAttribute("searchAttemptTried", true);
+        }
+        if (book != null) {
+            model.addAttribute("book", book);
+            model.addAttribute("owner", book.getOwner());
+        }
+        return "books/search";
     }
 }
