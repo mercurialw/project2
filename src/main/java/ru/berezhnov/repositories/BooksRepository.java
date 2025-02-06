@@ -6,4 +6,5 @@ import ru.berezhnov.models.Book;
 
 @Repository
 public interface BooksRepository extends JpaRepository<Book, Integer> {
+    Book findBookByTitleStartingWith(String title);
 }
