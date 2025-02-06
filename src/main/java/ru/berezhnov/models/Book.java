@@ -3,6 +3,10 @@ package ru.berezhnov.models;
 import io.micrometer.common.lang.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 
 @Entity
 @Table(name = "book")
@@ -27,16 +31,17 @@ public class Book {
     @Min(value = 1500, message = "Год должен быть больше чем 1500")
     private int year;
 
+    @Column(name = "last_modified")
+    @Temporal(TemporalType.TIMESTAMP)
+    @UpdateTimestamp
+    private Date lastModified;
+
+    @Transient
+    private boolean isExpired;
+
     @ManyToOne
     @JoinColumn(name = "person_id", referencedColumnName = "id")
     private Person owner;
-
-    public Book(int id, String title, String author, int year) {
-        this.id = id;
-        this.title = title;
-        this.author = author;
-        this.year = year;
-    }
 
     public Book() {}
 
@@ -83,6 +88,25 @@ public class Book {
         } else {
             this.owner = null;
         }
+    }
+
+    public Date getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
+    }
+
+    public boolean isExpired() {
+        isExpired = (this.owner != null &&
+                ChronoUnit.DAYS.between(lastModified.toInstant(),
+                        new Date().toInstant()) > 10);
+        return isExpired;
+    }
+
+    public void setExpired(boolean expired) {
+        isExpired = expired;
     }
 
     @Override
