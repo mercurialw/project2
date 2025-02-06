@@ -8,7 +8,7 @@
 <p th:text="${book.title + ', ' + book.author + ', ' + book.year}">book info</p>
 
 <div th:if="${owner}">
-  <p th:text="${'Книга сейчас у: ' + owner.fullName}"></p>
+  <a th:text="${'Книга сейчас у: ' + owner.fullName}" th:href="@{/people/{id}(id=${owner.id})}"></a>
   <form th:method="PATCH" th:action="@{/books/{id}/take(id=${book.id})}">
     <input type="submit" value="Освободить книгу">
   </form>
