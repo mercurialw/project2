@@ -51,6 +51,6 @@ public class PeopleService {
     }
 
     public Optional<Person> findByFullName(String name) {
-        return Optional.ofNullable(peopleRepository.findByFullName(name));
+        return peopleRepository.findByFullName(name);
     }
 }

@@ -9,7 +9,7 @@ import ru.berezhnov.services.PeopleService;
 
 @Component
 public class PersonValidator implements Validator {
-    private PeopleService peopleService;
+    private final PeopleService peopleService;
 
     @Autowired
     public PersonValidator(PeopleService peopleService) {
@@ -25,7 +25,7 @@ public class PersonValidator implements Validator {
     public void validate(Object target, Errors errors) {
         Person person = (Person) target;
         if (peopleService.findByFullName(person.getFullName()).isPresent()) {
-            errors.rejectValue("fullName", "", "This full name already exists");
+            errors.rejectValue("fullName", "", "Это ФИО уже существует");
         }
     }
 }
