@@ -72,7 +72,7 @@ public class BooksService {
         return booksRepository.findAll(PageRequest.of(pageNumber, size)).getContent();
     }
 
-    public Book findBookByTitleStartingWith(String title) {
-        return booksRepository.findBookByTitleStartingWith(title);
+    public List<Book> findBooksByTitleStartingWith(String title) {
+        return booksRepository.findByTitleStartingWith(title);
     }
 }

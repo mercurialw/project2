@@ -11,17 +11,19 @@
     <input type="submit" value="Искать!"/>
 </form>
 <div th:if="${searchAttemptTried}">
-    <div th:if="${book!=null}">
-        <p th:text="${book.title + ', ' + book.author + ', ' + book.year}"></p>
-        <div th:if="${owner!=null}">
-            <p th:text="${'Книга сейчас у: ' + owner.fullName}"></p>
+    <div th:if="${books!=null && !books.isEmpty()}">
+        <div th:each="book : ${books}">
+            <p th:text="${book.title + ', ' + book.author + ', ' + book.year}"></p>
+            <div th:if="${book.owner!=null}">
+                <p th:text="${'Книга сейчас у: ' + book.owner.fullName}"></p>
+            </div>
+            <div th:if="${book.owner==null}">
+                <p>Книга свободна</p>
+            </div>
+            <hr/>
         </div>
-        <div th:if="${owner==null}">
-            <p>Книга свободна</p>
-        </div>
-        <hr/>
     </div>
-    <div th:if="${book==null}">
+    <div th:unless="${books!=null && !books.isEmpty()}">
         <p>Книг не найдено</p>
     </div>
 </div>

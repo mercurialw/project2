@@ -110,15 +110,14 @@ public class BooksController {
     @GetMapping("/search")
     public String search(@ModelAttribute(name = "proxyBook") Book proxyBook,
                          Model model) {
-        Book book = null;
+        List<Book> books = null;
         String title = proxyBook.getTitle();
         if (title != null && !title.isEmpty()) {
-            book = booksService.findBookByTitleStartingWith(title);
+            books = booksService.findBooksByTitleStartingWith(title);
             model.addAttribute("searchAttemptTried", true);
         }
-        if (book != null) {
-            model.addAttribute("book", book);
-            model.addAttribute("owner", book.getOwner());
+        if (books != null && !books.isEmpty()) {
+            model.addAttribute("books", books);
         }
         return "books/search";
     }
