@@ -40,7 +40,9 @@ public class BooksService {
 
     @Transactional
     public void update(int id, Book book) {
+        Book bookToBeUpdated = booksRepository.findById(id).orElse(null);
         book.setId(id);
+        book.setOwner(bookToBeUpdated.getOwner());
         book.setLastModified(new Date());
         booksRepository.save(book);
     }
