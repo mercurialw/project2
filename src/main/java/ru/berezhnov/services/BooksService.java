@@ -23,7 +23,8 @@ public class BooksService {
         this.booksRepository = booksRepository;
     }
 
-    public List<Book> findAll() {
+    public List<Book> findAll(boolean sorted) {
+        if (sorted) return booksRepository.findAll(Sort.by("year"));
         return booksRepository.findAll();
     }
 
@@ -62,11 +63,7 @@ public class BooksService {
         book.setOwner(null);
     }
 
-    public List<Book> findAllSorted() {
-        return booksRepository.findAll(Sort.by("year"));
-    }
-
-    public List<Book> findAllPagination(int pageNumber, int size, boolean sorted) {
+    public List<Book> findWithPagination(int pageNumber, int size, boolean sorted) {
         if (sorted) return booksRepository.findAll(PageRequest.of(pageNumber, size, Sort.by("year")))
                 .getContent();
         return booksRepository.findAll(PageRequest.of(pageNumber, size)).getContent();

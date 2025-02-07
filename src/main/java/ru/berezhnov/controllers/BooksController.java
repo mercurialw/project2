@@ -28,19 +28,14 @@ public class BooksController {
     }
 
     @GetMapping()
-    public String booksPage(@RequestParam(name = "page", defaultValue = "-1") int pageNumber,
-                            @RequestParam(name = "books_per_page", defaultValue = "100") int size,
-                            @RequestParam(name = "sort_by_year", defaultValue = "false") boolean sortByYear,
+    public String booksPage(@RequestParam(name = "page", required = false) Integer page,
+                            @RequestParam(name = "books_per_page", required = false) Integer booksPerPage,
+                            @RequestParam(name = "sort_by_year", required = false) boolean sortByYear,
                             Model model) {
-        List<Book> books = null;
-        if (pageNumber < 0) {
-            if (sortByYear) books = booksService.findAllSorted();
-            else books = booksService.findAll();
-        } else {
-            if (sortByYear) books = booksService.findAllPagination(pageNumber, size, true);
-            else books = booksService.findAllPagination(pageNumber, size, false);
-        }
-        model.addAttribute("books", books);
+        if (page == null || booksPerPage == null)
+            model.addAttribute("books", booksService.findAll(sortByYear));
+        else
+            model.addAttribute("books", booksService.findWithPagination(page,booksPerPage, sortByYear));
         return "books/index";
     }
 
