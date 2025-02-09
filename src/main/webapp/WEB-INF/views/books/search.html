@@ -5,26 +5,25 @@
     <title>Поиск книги</title>
 </head>
 <body>
-<form th:method="GET" th:action="@{/books/search}" th:object="${proxyBook}">
+<form th:method="POST" th:action="@{/books/search}">
     <label for="title">Введите поисковой запрос: </label>
-    <input type="text" th:field="*{title}" id="title"/>
+    <input type="text" name="title" id="title"/>
     <input type="submit" value="Искать!"/>
 </form>
-<div th:if="${searchAttemptTried}">
-    <div th:if="${books!=null && !books.isEmpty()}">
-        <div th:each="book : ${books}">
-            <p th:text="${book.title + ', ' + book.author + ', ' + book.year}"></p>
-            <div th:if="${book.owner!=null}">
-                <p th:text="${'Книга сейчас у: ' + book.owner.fullName}"></p>
-            </div>
-            <div th:if="${book.owner==null}">
-                <p>Книга свободна</p>
-            </div>
-            <hr/>
-        </div>
+
+<div th:if="${books}">
+    <div th:if="${books.isEmpty()}">
+        <span>Книг не найдено</span>
     </div>
-    <div th:unless="${books!=null && !books.isEmpty()}">
-        <p>Книг не найдено</p>
+    <div th:each="book : ${books}">
+        <p th:text="${book.title + ', ' + book.author + ', ' + book.year}"></p>
+        <div th:if="${book.owner!=null}">
+            <p th:text="${'Книга сейчас у: ' + book.owner.fullName}"></p>
+        </div>
+        <div th:if="${book.owner==null}">
+            <p>Книга свободна</p>
+        </div>
+        <hr/>
     </div>
 </div>
 </body>

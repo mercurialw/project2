@@ -103,17 +103,13 @@ public class BooksController {
     }
 
     @GetMapping("/search")
-    public String search(@ModelAttribute(name = "proxyBook") Book proxyBook,
-                         Model model) {
-        List<Book> books = null;
-        String title = proxyBook.getTitle();
-        if (title != null && !title.isEmpty()) {
-            books = booksService.findBooksByTitleStartingWith(title);
-            model.addAttribute("searchAttemptTried", true);
-        }
-        if (books != null && !books.isEmpty()) {
-            model.addAttribute("books", books);
-        }
+    public String searchPage() {
+        return "books/search";
+    }
+
+    @PostMapping("/search")
+    public String searchQuery(@RequestParam(name = "title") String title, Model model) {
+        model.addAttribute("books",  booksService.findBooksByTitleStartingWith(title));
         return "books/search";
     }
 }
